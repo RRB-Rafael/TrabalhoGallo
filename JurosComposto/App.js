@@ -153,9 +153,11 @@ export default function App() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1D1D1D',
+    backgroundColor: '#0E1520',
   },
   scrollContainer: {
+    flexGrow: 1,              // Permite que o conteúdo cresça
+    justifyContent: 'center', // Centraliza verticalmente
     padding: 20,
     paddingBottom: 40,
   },
@@ -182,7 +184,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginBottom: 15,
-    color: '#333',
+    color: '#fbfbff',
   },
   inputGroup: {
     marginBottom: 15,
@@ -190,7 +192,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 16,
     marginBottom: 5,
-    color: '#555',
+    color: '#fbfbff',
   },
   input: {
     borderWidth: 1,
@@ -213,7 +215,7 @@ const styles = StyleSheet.create({
   },
   toggleButtonText: {
     fontSize: 16,
-    color: '#FFF',
+    color: '#fff',
   },
   resultGroup: {
     marginBottom: 12,

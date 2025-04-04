@@ -18,6 +18,6 @@ Biblioteca para roda na web:
 npx expo install react-dom react-native-web @expo/metro
 
 COMANDO PARA ATUALIZAR
-npm i 
+npm i            
 
 npx expo start --localhost --android
