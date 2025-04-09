@@ -1,15 +1,24 @@
 import React, { useState } from 'react';
-import { StyleSheet, View, Text, TextInput, ScrollView, KeyboardAvoidingView, Platform, TouchableOpacity } from 'react-native';
+import { 
+  StyleSheet, 
+  View, 
+  Text, 
+  TextInput, 
+  ScrollView, 
+  TouchableOpacity,
+  Platform,
+  Keyboard,
+  TouchableWithoutFeedback
+} from 'react-native';
 
 export default function App() {
   const [valorInicial, setValorInicial] = useState('1000');
   const [valorMensal, setValorMensal] = useState('0');
   const [taxaJuros, setTaxaJuros] = useState('5');
-  const [tipoTaxa, setTipoTaxa] = useState('anual'); // 'anual' ou 'mensal'
+  const [tipoTaxa, setTipoTaxa] = useState('anual');
   const [periodo, setPeriodo] = useState('120');
-  const [tipoPeriodo, setTipoPeriodo] = useState('meses'); // 'meses' ou 'anos'
- 
-  // Função para formatar números como moeda brasileira
+  const [tipoPeriodo, setTipoPeriodo] = useState('meses');
+
   const formatarMoeda = (valor) => {
     return parseFloat(valor).toLocaleString('pt-BR', {
       style: 'currency',
@@ -19,19 +28,16 @@ export default function App() {
     });
   };
 
-  // Cálculo dos juros compostos
   const calcularJuros = () => {
     const principal = parseFloat(valorInicial) || 0;
     const aporteMensal = parseFloat(valorMensal) || 0;
     const taxa = parseFloat(taxaJuros) || 0;
     let periodoMeses = parseInt(periodo) || 0;
    
-    // Converter período para meses se estiver em anos
     if (tipoPeriodo === 'anos') {
       periodoMeses = periodoMeses * 12;
     }
    
-    // Converter taxa para mensal se for anual
     let taxaMensal;
     if (tipoTaxa === 'anual') {
       taxaMensal = Math.pow(1 + taxa / 100, 1/12) - 1;
@@ -41,7 +47,6 @@ export default function App() {
    
     let montante = principal;
    
-    // Calcular mês a mês com aportes
     for (let i = 0; i < periodoMeses; i++) {
       montante = montante * (1 + taxaMensal) + aporteMensal;
     }
@@ -67,107 +72,105 @@ export default function App() {
   };
 
   return (
-    <KeyboardAvoidingView
-      behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-      style={styles.container}
-    >
-      <ScrollView contentContainerStyle={styles.scrollContainer}>
-       
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}> Meu cálculo</Text>
-         
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>- Valor inicial</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={valorInicial}
-              onChangeText={setValorInicial}
-            />
-          </View>
-         
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>- Valor mensal</Text>
-            <TextInput
-              style={styles.input}
-              keyboardType="numeric"
-              value={valorMensal}
-              onChangeText={setValorMensal}
-            />
-          </View>
-         
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>- Taxa de juros</Text>
-            <View style={styles.inputRow}>
-              <TextInput
-                style={[styles.input, {flex: 1}]}
-                keyboardType="numeric"
-                value={taxaJuros}
-                onChangeText={setTaxaJuros}
-              />
-              <TouchableOpacity onPress={toggleTipoTaxa} style={styles.toggleButton}>
-                <Text style={styles.toggleButtonText}>% ({tipoTaxa})</Text>
-              </TouchableOpacity>
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={styles.container}>
+        <ScrollView 
+          contentContainerStyle={styles.scrollContainer}
+          keyboardShouldPersistTaps="handled"
+        >
+          <View style={styles.content}>
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Meu cálculo</Text>
+             
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>- Valor inicial</Text>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={valorInicial}
+                  onChangeText={setValorInicial}
+                />
+              </View>
+             
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>- Valor mensal</Text>
+                <TextInput
+                  style={styles.input}
+                  keyboardType="numeric"
+                  value={valorMensal}
+                  onChangeText={setValorMensal}
+                />
+              </View>
+             
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>- Taxa de juros</Text>
+                <View style={styles.inputRow}>
+                  <TextInput
+                    style={[styles.input, {flex: 1}]}
+                    keyboardType="numeric"
+                    value={taxaJuros}
+                    onChangeText={setTaxaJuros}
+                  />
+                  <TouchableOpacity onPress={toggleTipoTaxa} style={styles.toggleButton}>
+                    <Text style={styles.toggleButtonText}>% ({tipoTaxa})</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+             
+              <View style={styles.inputGroup}>
+                <Text style={styles.label}>- Período em</Text>
+                <View style={styles.inputRow}>
+                  <TextInput
+                    style={[styles.input, {flex: 1}]}
+                    keyboardType="numeric"
+                    value={periodo}
+                    onChangeText={setPeriodo}
+                  />
+                  <TouchableOpacity onPress={toggleTipoPeriodo} style={styles.toggleButton}>
+                    <Text style={styles.toggleButtonText}>{tipoPeriodo}</Text>
+                  </TouchableOpacity>
+                </View>
+              </View>
+            </View>
+           
+            <View style={styles.section}>
+              <Text style={styles.sectionTitle}>Resultado</Text>
+             
+              <View style={styles.resultGroup}>
+                <Text style={styles.label}>- Valor total final</Text>
+                <Text style={styles.resultValue}>{formatarMoeda(resultado.valorFinal)}</Text>
+              </View>
+             
+              <View style={styles.resultGroup}>
+                <Text style={styles.label}>- Valor total investido</Text>
+                <Text style={styles.resultValue}>{formatarMoeda(resultado.totalInvestido)}</Text>
+              </View>
+             
+              <View style={styles.resultGroup}>
+                <Text style={styles.label}>- Total em juros</Text>
+                <Text style={styles.resultValueRed}>{formatarMoeda(resultado.totalJuros)}</Text>
+              </View>
             </View>
           </View>
-         
-          <View style={styles.inputGroup}>
-            <Text style={styles.label}>- Período em</Text>
-            <View style={styles.inputRow}>
-              <TextInput
-                style={[styles.input, {flex: 1}]}
-                keyboardType="numeric"
-                value={periodo}
-                onChangeText={setPeriodo}
-              />
-              <TouchableOpacity onPress={toggleTipoPeriodo} style={styles.toggleButton}>
-                <Text style={styles.toggleButtonText}>{tipoPeriodo}</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
-       
-        <View style={styles.section}>
-          <Text style={styles.sectionTitle}> Resultado</Text>
-         
-          <View style={styles.resultGroup}>
-            <Text style={styles.label}>- Valor total final</Text>
-            <Text style={styles.resultValue}>{formatarMoeda(resultado.valorFinal)}</Text>
-          </View>
-         
-          <View style={styles.resultGroup}>
-            <Text style={styles.label}>- Valor total investido</Text>
-            <Text style={styles.resultValue}>{formatarMoeda(resultado.totalInvestido)}</Text>
-          </View>
-         
-          <View style={styles.resultGroup}>
-            <Text style={styles.label}>- Total em juros</Text>
-            <Text style={styles.resultValueRed}>{formatarMoeda(resultado.totalJuros)}</Text>
-          </View>
-        </View>
-      </ScrollView>
-    </KeyboardAvoidingView>
+        </ScrollView>
+      </View>
+    </TouchableWithoutFeedback>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#0E1520',
+    backgroundColor: '#1D1D1D',
   },
   scrollContainer: {
-    flexGrow: 1,              // Permite que o conteúdo cresça
-    justifyContent: 'center', // Centraliza verticalmente
+    flexGrow: 1,
+  },
+  content: {
+    flex: 1,
+    justifyContent: 'center',
     padding: 20,
     paddingBottom: 40,
-  },
-  header: {
-    marginBottom: 20,
-  },
-  headerText: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    color: '#333',
   },
   section: {
     marginBottom: 25,
